@@ -1,0 +1,16 @@
+{
+  "schema_version": "3.0.0",
+  "view": "hld",
+  "revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd",
+  "graph_version": 3,
+  "generated_at_ms": 1792082690231,
+  "mermaid": "flowchart TD\n  subgraph Startup[\"Startup\"]\n    entry[\"Firmware entry<br/>main/entry.c: app_main\"]\n    application[\"Application startup<br/>firmware/app/app.c: app_start\"]\n  end\n  subgraph Logging[\"Logging\"]\n    logger[\"Logging facade<br/>firmware/utils/logger/logger.h: esp_log.h\"]\n    log_output[\"ESP-IDF log output\"]\n  end\n  entry -->|app_start#40;#41;| application\n  application -->|ESP_LOGI| logger\n  logger -->|esp_log.h| log_output",
+  "title": "High-Level Design",
+  "node_notes": {
+    "logger": "This is the logging facade included by the application, and it exposes ESP-IDF logging macros. firmware/utils/logger/logger.h re-exports esp_log.h.",
+    "log_output": "This is the destination for the ESP-IDF log call; the source establishes logging but does not specify a physical transport. The call originates from ESP_LOGI in firmware/app/app.c.",
+    "application": "This is the application startup function, and it emits the firmware-started log message. firmware/app/app.c calls ESP_LOGI with the app tag.",
+    "entry": "This is the ESP-IDF entry shim, and it starts the application by calling app_start(). The call is defined in main/entry.c."
+  },
+  "authored_by_model": true
+}

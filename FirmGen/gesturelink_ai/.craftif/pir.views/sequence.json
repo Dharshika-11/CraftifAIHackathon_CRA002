@@ -1,0 +1,10 @@
+{
+  "schema_version": "3.0.0",
+  "view": "sequence",
+  "revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd",
+  "graph_version": 3,
+  "generated_at_ms": 1792082690233,
+  "mermaid": "sequenceDiagram\n  participant Boot as app_main\n  participant App as app_start\n  participant Logger as logger.h\n  participant ESPLog as ESP-IDF log output\n  Boot->>App: app_start()\n  App->>Logger: ESP_LOGI(TAG, firmware started)\n  Logger->>ESPLog: Forward to esp_log.h",
+  "title": "Sequence Diagram",
+  "authored_by_model": true
+}

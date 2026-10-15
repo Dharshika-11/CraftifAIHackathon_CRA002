@@ -1,0 +1,29 @@
+Start testing: Oct 15 23:13 India Standard Time
+----------------------------------------------------------
+1/1 Testing: gesture_service_acceptance
+1/1 Test: gesture_service_acceptance
+Command: "D:/frimware_project/my_firmware/gesturelink_ai/build-host-ninja/gesture_service_acceptance.exe"
+Directory: D:/frimware_project/my_firmware/gesturelink_ai/build-host-ninja
+"gesture_service_acceptance" start time: Oct 15 23:13 India Standard Time
+Output:
+----------------------------------------------------------
+PASS: board LED configuration
+PASS: startup initializes LED OFF
+PASS: LIGHT_ON turns LED on
+PASS: LIGHT_OFF turns LED off
+PASS: invalid commands do not turn LED on
+PASS: CRLF command line
+PASS: fragmented command line
+PASS: overlong command rejected
+PASS: command service and UART result reporting
+PASS: overlong service line logged as invalid
+All 10 acceptance tests passed.
+<end of output>
+Test time =   0.84 sec
+----------------------------------------------------------
+Test Passed.
+"gesture_service_acceptance" end time: Oct 15 23:13 India Standard Time
+"gesture_service_acceptance" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 15 23:13 India Standard Time

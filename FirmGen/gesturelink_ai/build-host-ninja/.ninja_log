@@ -1,0 +1,7 @@
+# ninja log v6
+88	381	8137892102191759	CMakeFiles/gesture_service_acceptance.dir/gesture_service_acceptance.c.obj	ad40db139d7fc3dc
+98	348	8137892102278028	CMakeFiles/gesture_service_acceptance.dir/D_/frimware_project/my_firmware/gesturelink_ai/firmware/services/gesture_service.c.obj	76c5254524cc6c2b
+381	775	8137892105111172	gesture_service_acceptance.exe	35cbc52d981dc522
+100	291	8137894327953788	CMakeFiles/gesture_service_acceptance.dir/D_/frimware_project/my_firmware/gesturelink_ai/firmware/services/gesture_service.c.obj	6d19bbff883ad762
+90	346	8137894327869652	CMakeFiles/gesture_service_acceptance.dir/gesture_service_acceptance.c.obj	363c83ba6735ab13
+346	689	8137894330450130	gesture_service_acceptance.exe	35cbc52d981dc522

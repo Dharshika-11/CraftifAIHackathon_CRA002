@@ -1,0 +1,15 @@
+{
+  "schema_version": "3.0.0",
+  "view": "lld",
+  "revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd",
+  "graph_version": 3,
+  "generated_at_ms": 1792082690232,
+  "mermaid": "flowchart TD\n  subgraph BootPath[\"Boot call path\"]\n    boot[\"Call application startup<br/>main/entry.c:4-7\"]\n    start[\"Log firmware started<br/>firmware/app/app.c:6-10\"]\n    output[\"Emit ESP-IDF log message<br/>firmware/utils/logger/logger.h\"]\n  end\n  boot -->|app_start#40;#41;| start\n  start -->|ESP_LOGI| output",
+  "title": "Low-Level Design (Firmware Workflow)",
+  "node_notes": {
+    "boot": "This step runs the firmware entry shim and calls app_start(). The call is in main/entry.c:4-7.",
+    "start": "This step logs the firmware-started message when app_start() runs. The ESP_LOGI call is in firmware/app/app.c:6-10.",
+    "output": "This step represents the ESP-IDF logging macro's output path. firmware/utils/logger/logger.h re-exports esp_log.h, and the application uses ESP_LOGI."
+  },
+  "authored_by_model": true
+}

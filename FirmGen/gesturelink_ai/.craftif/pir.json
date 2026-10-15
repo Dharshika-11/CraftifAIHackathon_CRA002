@@ -1,0 +1,320 @@
+{
+  "schema_version": "2.1.0",
+  "id": "pir_gesturelink_ai",
+  "revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd",
+  "provenance": {
+    "project_path": "D:/frimware_project/my_firmware/gesturelink_ai",
+    "chat_id": "fdcab5bf-4781-47af-96a4-6a624b1c9a3e",
+    "revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd",
+    "generated_at_ms": 1792082669286,
+    "analyzer_version": "pir_maker-static-0.13.0",
+    "analyzed_files": [
+      "CMakeLists.txt",
+      "firmware/app/app.c",
+      "firmware/app/app.h",
+      "firmware/bsp/board.c",
+      "firmware/bsp/board.h",
+      "firmware/configs/app_config.h",
+      "firmware/configs/build_config.h",
+      "firmware/configs/feature_config.h",
+      "firmware/configs/platform_config.h",
+      "firmware/osal/osal.h",
+      "firmware/utils/helpers/helpers.c",
+      "firmware/utils/helpers/helpers.h",
+      "firmware/utils/logger/logger.c",
+      "firmware/utils/logger/logger.h",
+      "main/entry.c",
+      "sdkconfig",
+      "sdkconfig.defaults"
+    ],
+    "file_hashes": {
+      "firmware/osal/osal.h": "9e93e5096d971aa31beb162503c0e4f3",
+      "firmware/app/app.c": "6de318e73f38c75aa291216cc7c0b9cc",
+      "firmware/configs/platform_config.h": "010b01144dbd2d3fb63f3053b158ab7a",
+      "sdkconfig": "27471c849325db9bedb560e050791c1b",
+      "firmware/app/app.h": "ebc6cfe87fb8e2ab299633dd7a067f3b",
+      "firmware/bsp/board.c": "e630056f89563be97755fb3703f3a541",
+      "main/entry.c": "86aaa3bc61772628c601798f4d9dea56",
+      "firmware/bsp/board.h": "f3c644c7766235ac70a5306423d79ff9",
+      "firmware/configs/app_config.h": "61b537b868517e7fba4c00fe324b3380",
+      "firmware/utils/helpers/helpers.h": "ec8b635b7e5b55f8aeb8f47c3ff34312",
+      "firmware/utils/logger/logger.h": "2c284c641c88c6a4fff52db62e8d1ea5",
+      "firmware/utils/logger/logger.c": "8e992fef35c9a4678ec38e60902d741d",
+      "CMakeLists.txt": "736bacf1fc245d8b8ccc025495a9597a",
+      "firmware/configs/feature_config.h": "08ef51c6dfb8aa157bd736ea8388e0ba",
+      "firmware/utils/helpers/helpers.c": "914568ab7415fec17e74f306cbb5ae09",
+      "firmware/configs/build_config.h": "dd997e9a0a461df28c370a61963fd7e5",
+      "sdkconfig.defaults": "c30560e2b1487df145b38e782be2a243"
+    },
+    "board_id": "gesturelink-esp32-s3",
+    "target_chip": "esp32s3",
+    "config_hash": "sdkconfig.defaults:c30560e2b1487df145b38e782be2a243|sdkconfig:27471c849325db9bedb560e050791c1b",
+    "feature_flags": "mode=hybrid;refine=true"
+  },
+  "approval": {
+    "status": "pending"
+  },
+  "nodes": [
+    {
+      "id": "boot",
+      "node_type": "system_init",
+      "label": "Boot / app_main",
+      "properties": {
+        "target": "esp32s3"
+      },
+      "source_refs": [
+        {
+          "file": "main/entry.c",
+          "confidence": 1.0,
+          "inferred_by": "static"
+        }
+      ],
+      "sync": {
+        "state": "synced",
+        "last_synced_revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd"
+      },
+      "ownership": {
+        "primary_files": [
+          "main/entry.c"
+        ]
+      },
+      "editable_fields": [
+        "log_level"
+      ],
+      "layer": "system",
+      "ai_summary": "Bootstraps firmware startup and initializes core subsystems.",
+      "confidence": 1.0,
+      "authority": "agent",
+      "semantic_tags": [],
+      "dependencies": []
+    }
+  ],
+  "edges": [],
+  "layers": {
+    "physical": [],
+    "runtime": [],
+    "network": [],
+    "system": [
+      "boot"
+    ]
+  },
+  "partitions": [],
+  "components": [
+    {
+      "id": "main",
+      "path": "main/CMakeLists.txt",
+      "requires": [
+        "esp_driver_gpio",
+        "esp_timer",
+        "esp_wifi",
+        "esp_event",
+        "nvs_flash",
+        "freertos",
+        "log"
+      ],
+      "source_files": []
+    }
+  ],
+  "modules": [
+    {
+      "id": "app",
+      "label": "app",
+      "path": "app",
+      "kind": "application",
+      "files": [
+        "firmware/app/app.c",
+        "firmware/app/app.h"
+      ]
+    },
+    {
+      "id": "bsp",
+      "label": "bsp",
+      "path": "bsp",
+      "kind": "board",
+      "files": [
+        "firmware/bsp/board.c",
+        "firmware/bsp/board.h"
+      ]
+    },
+    {
+      "id": "configs",
+      "label": "configs",
+      "path": "configs",
+      "kind": "configuration",
+      "files": [
+        "firmware/configs/app_config.h",
+        "firmware/configs/build_config.h",
+        "firmware/configs/feature_config.h",
+        "firmware/configs/platform_config.h"
+      ]
+    },
+    {
+      "id": "main",
+      "label": "main",
+      "path": "main",
+      "kind": "entrypoint",
+      "files": [
+        "main/entry.c"
+      ]
+    },
+    {
+      "id": "osal",
+      "label": "osal",
+      "path": "osal",
+      "kind": "abstraction",
+      "files": [
+        "firmware/osal/osal.h"
+      ]
+    },
+    {
+      "id": "utils_helpers",
+      "label": "utils/helpers",
+      "path": "utils/helpers",
+      "kind": "utility",
+      "files": [
+        "firmware/utils/helpers/helpers.c",
+        "firmware/utils/helpers/helpers.h"
+      ]
+    },
+    {
+      "id": "utils_logger",
+      "label": "utils/logger",
+      "path": "utils/logger",
+      "kind": "utility",
+      "files": [
+        "firmware/utils/logger/logger.c",
+        "firmware/utils/logger/logger.h"
+      ]
+    }
+  ],
+  "module_deps": [
+    {
+      "from": "app",
+      "to": "configs",
+      "via": "include",
+      "file": "firmware/app/app.c",
+      "line": 2,
+      "symbol": "app_config.h"
+    },
+    {
+      "from": "app",
+      "to": "utils_logger",
+      "via": "include",
+      "file": "firmware/app/app.c",
+      "line": 3,
+      "symbol": "logger.h"
+    },
+    {
+      "from": "bsp",
+      "to": "configs",
+      "via": "include",
+      "file": "firmware/bsp/board.h",
+      "line": 18,
+      "symbol": "app_config.h"
+    },
+    {
+      "from": "main",
+      "to": "app",
+      "via": "include",
+      "file": "main/entry.c",
+      "line": 2,
+      "symbol": "app.h"
+    }
+  ],
+  "task_flows": [],
+  "summary": {
+    "headline": "No refinements supported by the provided entry-point snippet.",
+    "node_count": 0,
+    "edge_count": 0,
+    "warnings": []
+  },
+  "diagrams": {
+    "hld": {
+      "title": "High-Level Design",
+      "mermaid": "flowchart TD\n  subgraph Startup[\"Startup\"]\n    entry[\"Firmware entry<br/>main/entry.c: app_main\"]\n    application[\"Application startup<br/>firmware/app/app.c: app_start\"]\n  end\n  subgraph Logging[\"Logging\"]\n    logger[\"Logging facade<br/>firmware/utils/logger/logger.h: esp_log.h\"]\n    log_output[\"ESP-IDF log output\"]\n  end\n  entry -->|app_start#40;#41;| application\n  application -->|ESP_LOGI| logger\n  logger -->|esp_log.h| log_output",
+      "authored_by_model": true,
+      "node_notes": {
+        "logger": "This is the logging facade included by the application, and it exposes ESP-IDF logging macros. firmware/utils/logger/logger.h re-exports esp_log.h.",
+        "log_output": "This is the destination for the ESP-IDF log call; the source establishes logging but does not specify a physical transport. The call originates from ESP_LOGI in firmware/app/app.c.",
+        "application": "This is the application startup function, and it emits the firmware-started log message. firmware/app/app.c calls ESP_LOGI with the app tag.",
+        "entry": "This is the ESP-IDF entry shim, and it starts the application by calling app_start(). The call is defined in main/entry.c."
+      }
+    },
+    "lld": {
+      "title": "Low-Level Design (Firmware Workflow)",
+      "mermaid": "flowchart TD\n  subgraph BootPath[\"Boot call path\"]\n    boot[\"Call application startup<br/>main/entry.c:4-7\"]\n    start[\"Log firmware started<br/>firmware/app/app.c:6-10\"]\n    output[\"Emit ESP-IDF log message<br/>firmware/utils/logger/logger.h\"]\n  end\n  boot -->|app_start#40;#41;| start\n  start -->|ESP_LOGI| output",
+      "authored_by_model": true,
+      "node_notes": {
+        "boot": "This step runs the firmware entry shim and calls app_start(). The call is in main/entry.c:4-7.",
+        "start": "This step logs the firmware-started message when app_start() runs. The ESP_LOGI call is in firmware/app/app.c:6-10.",
+        "output": "This step represents the ESP-IDF logging macro's output path. firmware/utils/logger/logger.h re-exports esp_log.h, and the application uses ESP_LOGI."
+      }
+    },
+    "sequence": {
+      "title": "Sequence Diagram",
+      "mermaid": "sequenceDiagram\n  participant Boot as app_main\n  participant App as app_start\n  participant Logger as logger.h\n  participant ESPLog as ESP-IDF log output\n  Boot->>App: app_start()\n  App->>Logger: ESP_LOGI(TAG, firmware started)\n  Logger->>ESPLog: Forward to esp_log.h",
+      "participants": [
+        "Boot",
+        "App",
+        "Logger",
+        "ESPLog"
+      ],
+      "generated_from": [
+        "main/entry.c"
+      ],
+      "grounding": 0.25,
+      "authored_by_model": true
+    },
+    "model_pass_expected": true
+  },
+  "change_log": [],
+  "unresolved": [
+    {
+      "kind": "sparse_extraction",
+      "message": "app_main found but no GPIO/tasks extracted; AI refine may help",
+      "file": "main/entry.c"
+    }
+  ],
+  "read_only": false,
+  "graph_version": 3,
+  "generation": {
+    "mode": "hybrid_refine",
+    "model": "local_openai_proxy/gpt-6-luna",
+    "triggered_by": "mount",
+    "analyzed_at_ms": 1792082673646,
+    "input_files": [
+      "CMakeLists.txt",
+      "firmware/app/app.c",
+      "firmware/app/app.h",
+      "firmware/bsp/board.c",
+      "firmware/bsp/board.h",
+      "firmware/configs/app_config.h",
+      "firmware/configs/build_config.h",
+      "firmware/configs/feature_config.h",
+      "firmware/configs/platform_config.h",
+      "firmware/osal/osal.h",
+      "firmware/utils/helpers/helpers.c",
+      "firmware/utils/helpers/helpers.h",
+      "firmware/utils/logger/logger.c",
+      "firmware/utils/logger/logger.h",
+      "main/entry.c",
+      "sdkconfig",
+      "sdkconfig.defaults"
+    ],
+    "token_usage": {
+      "prompt_tokens": 3072,
+      "completion_tokens": 230
+    }
+  },
+  "sync_metadata": {
+    "project_file": "",
+    "content_hash": "",
+    "pending_patches": []
+  },
+  "validation_state": {
+    "valid": true,
+    "error_count": 0,
+    "warning_count": 0,
+    "validated_at_ms": 1792082673646
+  }
+}

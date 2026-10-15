@@ -1,0 +1,4 @@
+D:/frimware_project/my_firmware/gesturelink_ai/build-host-ninja/CMakeFiles/gesture_service_acceptance.dir
+D:/frimware_project/my_firmware/gesturelink_ai/build-host-ninja/CMakeFiles/test.dir
+D:/frimware_project/my_firmware/gesturelink_ai/build-host-ninja/CMakeFiles/edit_cache.dir
+D:/frimware_project/my_firmware/gesturelink_ai/build-host-ninja/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,50 @@
+{
+  "schema_version": "3.0.0",
+  "view": "wiring",
+  "revision": "f63dfe20a8fbb1703a04fef4e7a9f1dd",
+  "graph_version": 3,
+  "generated_at_ms": 1792082690231,
+  "graph": {
+    "schema_version": 1,
+    "id": "pir_gesturelink_ai",
+    "name": "gesturelink_ai topology",
+    "description": "No refinements supported by the provided entry-point snippet.",
+    "board_id": "gesturelink-esp32-s3",
+    "nodes": [
+      {
+        "id": "boot",
+        "node_type": "system_init",
+        "label": "Boot / app_main",
+        "description": "Bootstraps firmware startup and initializes core subsystems.",
+        "ports": [
+          {
+            "id": "boot_boot_out_0",
+            "name": "boot_out",
+            "direction": "output",
+            "datatype": "execution",
+            "required": true,
+            "multiplicity": "one"
+          }
+        ],
+        "properties": {
+          "target": "esp32s3"
+        },
+        "execution": {},
+        "visual": {
+          "x": 0.0,
+          "y": 0.0,
+          "layer": 0
+        }
+      }
+    ],
+    "connections": [],
+    "layout": {
+      "orientation": "",
+      "node_width": 0.0,
+      "layer_gap": 0.0,
+      "node_gap": 0.0
+    }
+  },
+  "title": "Wiring Topology",
+  "authored_by_model": false
+}
