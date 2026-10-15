@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "author": "Dharshini Dharshini",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": { "builder": "esp-idf" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 111.6,
+      "left": 147.8,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 80.75,
+      "left": 124.8,
+      "attrs": { "value": "1000" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "led1:A", "r1:1", "green", [ "v19.2", "h-19.2", "v-9.6" ] ],
+    [ "esp:GND.3", "led1:C", "black", [ "h71.77", "v-67.38" ] ],
+    [ "esp:38", "r1:2", "green", [ "h90.97", "v-28.98" ] ]
+  ],
+  "dependencies": {}
+}
