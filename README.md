@@ -12,7 +12,10 @@
 ![ESP32-S3](https://img.shields.io/badge/MCU-ESP32--S3-e11d48?style=for-the-badge)
 ![TensorRT](https://img.shields.io/badge/Inference-TensorRT-76b900?style=for-the-badge)
 
-[🎥 Demo Video](#) 
+ 
+#  Check the Updated Video here
+
+[🎥 Live Demo Video ](https://drive.google.com/file/d/1jX_A2O8tGuPanzyoZEfCgUfZUSmhKtuE/view?usp=sharing)
 
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/7a7140f0-cedf-4531-9dee-5ca9e14e3dc6" />
 
