@@ -107,11 +107,11 @@ class BasePoseEstimator(abc.ABC):
 
 
 # ======================================================================
-# MediaPipe backend
+# MediaPipe backend (Tasks API with legacy solutions fallback)
 # ======================================================================
 
 class MediaPipePoseEstimator(BasePoseEstimator):
-    """Pose estimator backed by *mediapipe.solutions.pose*.
+    """Pose estimator backed by MediaPipe Tasks API (or legacy solutions.pose).
 
     Parameters
     ----------
@@ -121,9 +121,10 @@ class MediaPipePoseEstimator(BasePoseEstimator):
         Minimum confidence for the person-detection stage.
     min_tracking_confidence : float
         Minimum confidence for the landmark-tracking stage.
+    model_path : Optional[str]
+        Explicit path to the .task file (optional).
     """
 
-    # MediaPipe landmark index → name (only the ones we need).
     _INDEX_TO_NAME: Dict[int, str] = {
         11: "LEFT_SHOULDER",
         12: "RIGHT_SHOULDER",
@@ -133,42 +134,107 @@ class MediaPipePoseEstimator(BasePoseEstimator):
         16: "RIGHT_WRIST",
     }
 
+    _MODEL_FILES: Dict[int, str] = {
+        0: "pose_landmarker_lite.task",
+        1: "pose_landmarker_full.task",
+        2: "pose_landmarker_heavy.task",
+    }
+
+    _MODEL_URLS: Dict[int, str] = {
+        0: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+        1: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",
+        2: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task",
+    }
+
     def __init__(
         self,
         model_complexity: int = 1,
         min_detection_confidence: float = 0.5,
         min_tracking_confidence: float = 0.5,
+        model_path: Optional[str] = None,
     ) -> None:
-        self._model_complexity = model_complexity
+        self._model_complexity = int(model_complexity)
+        if self._model_complexity not in (0, 1, 2):
+            self._model_complexity = 1
         self._min_det = min_detection_confidence
         self._min_trk = min_tracking_confidence
-        self._pose = None  # type: ignore[assignment]
+        self._model_path = model_path
+        self._mode = "uninitialized"  # "tasks" or "legacy"
+        self._detector = None
+        self._mp = None
 
     # ------------------------------------------------------------------
     # Lifecycle
     # ------------------------------------------------------------------
 
-    def initialize(self) -> None:
-        import mediapipe as mp  # lazy import
+    def _ensure_task_model(self) -> str:
+        import os
+        import urllib.request
+        from pathlib import Path
 
-        self._mp_pose = mp.solutions.pose
-        self._pose = self._mp_pose.Pose(
-            static_image_mode=False,
-            model_complexity=self._model_complexity,
-            min_detection_confidence=self._min_det,
-            min_tracking_confidence=self._min_trk,
-        )
-        logger.info(
-            "MediaPipe Pose initialised (complexity=%d, det=%.2f, trk=%.2f)",
-            self._model_complexity,
-            self._min_det,
-            self._min_trk,
-        )
+        if self._model_path and os.path.exists(self._model_path):
+            return self._model_path
+
+        base_dir = Path(__file__).resolve().parent.parent / "models"
+        base_dir.mkdir(parents=True, exist_ok=True)
+        filename = self._MODEL_FILES.get(self._model_complexity, "pose_landmarker_full.task")
+        model_file = base_dir / filename
+
+        if not model_file.exists():
+            url = self._MODEL_URLS.get(self._model_complexity, self._MODEL_URLS[1])
+            logger.info("Downloading pose landmarker model from %s...", url)
+            urllib.request.urlretrieve(url, str(model_file))
+            logger.info("Model saved to %s", model_file)
+
+        return str(model_file)
+
+    def initialize(self) -> None:
+        import mediapipe as mp
+        self._mp = mp
+
+        # Try legacy solutions.pose first if available
+        if hasattr(mp, "solutions") and hasattr(mp.solutions, "pose"):
+            self._mode = "legacy"
+            self._detector = mp.solutions.pose.Pose(
+                static_image_mode=False,
+                model_complexity=self._model_complexity,
+                min_detection_confidence=self._min_det,
+                min_tracking_confidence=self._min_trk,
+            )
+            logger.info(
+                "MediaPipe Pose (legacy solutions) initialised (complexity=%d)",
+                self._model_complexity,
+            )
+            return
+
+        # Otherwise use MediaPipe Tasks API
+        try:
+            from mediapipe.tasks import python
+            from mediapipe.tasks.python import vision
+
+            task_model_path = self._ensure_task_model()
+            base_options = python.BaseOptions(model_asset_path=task_model_path)
+            options = vision.PoseLandmarkerOptions(
+                base_options=base_options,
+                min_pose_detection_confidence=self._min_det,
+                min_tracking_confidence=self._min_trk,
+                output_segmentation_masks=False,
+            )
+            self._detector = vision.PoseLandmarker.create_from_options(options)
+            self._mode = "tasks"
+            logger.info(
+                "MediaPipe PoseLandmarker (Tasks API) initialised with model %s",
+                task_model_path,
+            )
+        except Exception as exc:
+            logger.error("Failed to initialise MediaPipe Tasks API: %s", exc)
+            raise
 
     def release(self) -> None:
-        if self._pose is not None:
-            self._pose.close()
-            self._pose = None
+        if self._detector is not None:
+            if hasattr(self._detector, "close"):
+                self._detector.close()
+            self._detector = None
             logger.info("MediaPipe Pose released.")
 
     # ------------------------------------------------------------------
@@ -176,37 +242,70 @@ class MediaPipePoseEstimator(BasePoseEstimator):
     # ------------------------------------------------------------------
 
     def estimate(self, frame: np.ndarray) -> PoseResult:
-        """Run MediaPipe Pose on *frame* (BGR) and return a PoseResult."""
-        if self._pose is None:
+        """Run pose estimation on *frame* (BGR) and return a PoseResult."""
+        if self._detector is None:
             raise RuntimeError("Pose estimator not initialised — call initialize() first.")
 
         h, w = frame.shape[:2]
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self._pose.process(rgb)
-
         pose_result = PoseResult()
 
-        if results.pose_landmarks is None:
+        if self._mode == "tasks":
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            mp_image = self._mp.Image(image_format=self._mp.ImageFormat.SRGB, data=rgb)
+            detection_result = self._detector.detect(mp_image)
+
+            if not detection_result.pose_landmarks:
+                return pose_result
+
+            pose_result.detected = True
+            landmarks_list = detection_result.pose_landmarks[0]
+
+            for idx, lm in enumerate(landmarks_list):
+                name = self._INDEX_TO_NAME.get(idx)
+                vis = getattr(lm, "visibility", 1.0)
+                if vis is None:
+                    vis = 1.0
+                landmark = Landmark(
+                    name=name or f"LANDMARK_{idx}",
+                    x_norm=float(lm.x),
+                    y_norm=float(lm.y),
+                    z_norm=float(lm.z) if hasattr(lm, "z") else 0.0,
+                    visibility=float(vis),
+                    x_px=int(lm.x * w),
+                    y_px=int(lm.y * h),
+                )
+                pose_result.all_landmarks.append(landmark)
+                if name is not None:
+                    pose_result.landmarks[name] = landmark
+
             return pose_result
 
-        pose_result.detected = True
+        else:
+            # Legacy solutions.pose
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = self._detector.process(rgb)
 
-        for idx, lm in enumerate(results.pose_landmarks.landmark):
-            name = self._INDEX_TO_NAME.get(idx)
-            landmark = Landmark(
-                name=name or f"LANDMARK_{idx}",
-                x_norm=lm.x,
-                y_norm=lm.y,
-                z_norm=lm.z,
-                visibility=lm.visibility,
-                x_px=int(lm.x * w),
-                y_px=int(lm.y * h),
-            )
-            pose_result.all_landmarks.append(landmark)
-            if name is not None:
-                pose_result.landmarks[name] = landmark
+            if results.pose_landmarks is None:
+                return pose_result
 
-        return pose_result
+            pose_result.detected = True
+
+            for idx, lm in enumerate(results.pose_landmarks.landmark):
+                name = self._INDEX_TO_NAME.get(idx)
+                landmark = Landmark(
+                    name=name or f"LANDMARK_{idx}",
+                    x_norm=lm.x,
+                    y_norm=lm.y,
+                    z_norm=lm.z,
+                    visibility=lm.visibility,
+                    x_px=int(lm.x * w),
+                    y_px=int(lm.y * h),
+                )
+                pose_result.all_landmarks.append(landmark)
+                if name is not None:
+                    pose_result.landmarks[name] = landmark
+
+            return pose_result
 
 
 # ======================================================================
