@@ -1,0 +1,79 @@
+# ============================================================================
+# CraftifAI PipeGen — Pipeline Configuration
+# ============================================================================
+# All tunable parameters for the GestureLink AI vision pipeline.
+# Override any value via CLI flags (see run_pipeline.py --help).
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Camera
+# ---------------------------------------------------------------------------
+camera:
+  index: 0                    # Camera device index (0 = default webcam)
+  width: 640                  # Capture width in pixels
+  height: 480                 # Capture height in pixels
+  fps: 30                     # Target frames per second
+
+# ---------------------------------------------------------------------------
+# Pose Estimation
+# ---------------------------------------------------------------------------
+pose:
+  backend: mediapipe           # "mediapipe" or "tensorrt" (future)
+  model_complexity: 1          # MediaPipe model complexity: 0 (lite), 1, 2 (heavy)
+  min_detection_confidence: 0.5
+  min_tracking_confidence: 0.5
+
+# ---------------------------------------------------------------------------
+# Gesture Classification
+# ---------------------------------------------------------------------------
+gesture:
+  # A wrist must be this many *normalized* Y-units above the corresponding
+  # shoulder to count as "raised".  In MediaPipe coordinates Y increases
+  # downward, so wrist.y < shoulder.y - threshold means raised.
+  raise_threshold: 0.10
+
+# ---------------------------------------------------------------------------
+# Reliability Safeguards
+# ---------------------------------------------------------------------------
+reliability:
+  confidence_threshold: 0.5    # Reject landmarks below this visibility score
+  stable_frames: 5             # Gesture must persist for N consecutive frames
+  cooldown_seconds: 3.0        # Min seconds between re-sending the same command
+  hysteresis: true             # Gesture must drop before same gesture re-triggers
+
+# ---------------------------------------------------------------------------
+# Command Transport — Serial (UART)
+# ---------------------------------------------------------------------------
+serial:
+  port: COM3                   # Serial port (e.g. COM3 on Windows, /dev/ttyUSB0 on Linux)
+  baudrate: 115200
+  timeout: 1.0                 # Read timeout in seconds
+  dry_run: false               # If true, log commands instead of sending
+
+# ---------------------------------------------------------------------------
+# Command Transport — MQTT (optional, stub)
+# ---------------------------------------------------------------------------
+mqtt:
+  enabled: false
+  broker: localhost
+  port: 1883
+  topic: gesturelink/commands
+
+# ---------------------------------------------------------------------------
+# Visualization
+# ---------------------------------------------------------------------------
+visualization:
+  enabled: true                # Show OpenCV debug window
+  show_skeleton: true
+  show_gesture: true
+  show_confidence: true
+  show_command_history: true
+  max_history: 5               # Number of recent commands to display
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logging:
+  level: INFO                  # DEBUG, INFO, WARNING, ERROR
+  json_output: false           # Emit structured JSON log lines
+  log_file: null               # Path to log file (null = stderr only)
